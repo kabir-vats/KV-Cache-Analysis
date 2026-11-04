@@ -30,23 +30,33 @@ The figures below are included in [`imgs/`](imgs/) and provide a quick visual ov
 
 ### Prompt length and prefill cache
 
-![KV-cache prefill size versus input length for the models in the plotted dataset](imgs/inp_vs_kv.png)
-
-**What it shows:** the horizontal axis is input length and the vertical axis is KV-cache size after prompt prefill. The plotted models have different slopes and absolute cache sizes; the chart illustrates why KV memory should be compared per model rather than inferred from parameter count alone.
-
-![Relative decoding throughput versus input length, normalized to the reference row](imgs/inp_vs_speed.png)
-
-**What it shows:** throughput change is plotted relative to a baseline throughput value for each model, with the dashed line marking zero change. The analysis notebook selects the second CSV row as the baseline, so verify that row corresponds to the intended reference input length before interpreting percentages.
+<table>
+  <tr>
+    <td width="50%" align="center">
+      <img src="imgs/inp_vs_kv.png" alt="KV-cache prefill size versus input length for the models in the plotted dataset" width="100%">
+      <br><sub><strong>Input length vs. prefill KV-cache size.</strong> Cache size generally grows with prompt length; the slope and absolute size vary by model.</sub>
+    </td>
+    <td width="50%" align="center">
+      <img src="imgs/inp_vs_speed.png" alt="Relative decoding throughput versus input length, normalized to the reference row" width="100%">
+      <br><sub><strong>Input length vs. relative decoding throughput.</strong> The dashed line marks no change from baseline. The plotting notebook uses the second CSV row as the baseline.</sub>
+    </td>
+  </tr>
+</table>
 
 ### Generation length and growing cache
 
-![Final KV-cache size versus number of generated tokens](imgs/gen_vs_kv.png)
-
-**What it shows:** the final KV cache grows as more tokens are generated. The growth rates differ across the models in this dataset, reflecting their cache/head configurations and numerical formats.
-
-![Relative decoding throughput versus number of generated tokens, normalized to the reference row](imgs/gen_vs_speed.png)
-
-**What it shows:** decoding throughput is compared with the per-model baseline (again, the second row in each CSV). The downward trends in several curves indicate lower throughput at longer generation lengths in these measurements; they are empirical results for the recorded setup, not a guarantee for every model or hardware configuration.
+<table>
+  <tr>
+    <td width="50%" align="center">
+      <img src="imgs/gen_vs_kv.png" alt="Final KV-cache size versus number of generated tokens" width="100%">
+      <br><sub><strong>Generated tokens vs. final KV-cache size.</strong> The cache grows as generation proceeds, with different rates across the plotted models.</sub>
+    </td>
+    <td width="50%" align="center">
+      <img src="imgs/gen_vs_speed.png" alt="Relative decoding throughput versus number of generated tokens, normalized to the reference row" width="100%">
+      <br><sub><strong>Generated tokens vs. relative decoding throughput.</strong> Several models slow down as generation length increases. The second CSV row is used as each model's baseline.</sub>
+    </td>
+  </tr>
+</table>
 
 ### Retrieval accuracy and cache precision
 
