@@ -15,6 +15,44 @@ The notebooks are research/experiment artifacts, not a packaged Python library. 
 | `kv-audit-226.ipynb` | Benchmarks model prefill and generation while recording KV-cache size, peak allocated CUDA memory, TTFT, and decoding throughput. The checked-in configuration loads `google/gemma-2b` and varies input length. |
 | `needle-in-hay-stack-226.ipynb` | Creates synthetic contexts containing a random passcode (“needle”), then measures exact/substring retrieval accuracy and latency across context lengths and insertion depths. |
 | `226-data-analysis.ipynb` | Reads benchmark CSV files from Kaggle input datasets and plots KV-cache size, throughput changes, and TTFT against input or generated-token length. |
+| `imgs/` | Figures embedded in this README: attention architecture overview, benchmark plots, and a KV-cache precision/retrieval comparison. |
+| `paper.pdf` | Project paper. |
+
+## Visual guide
+
+The figures below are included in [`imgs/`](imgs/) and provide a quick visual overview of the attention variants and benchmark results.
+
+### Attention architectures and KV-cache sharing
+
+![Diagram comparing MHA, GQA, and MQA query-to-key/value head sharing](imgs/MHA_GQA_MQA.jpg)
+
+**How to read it:** MHA keeps a separate key/value head for each query head; GQA shares each key/value head across a group of query heads; MQA shares a single key/value head across all query heads. For a fixed number of query heads and sequence length, fewer KV heads generally mean fewer cached key/value tensors. The exact memory and quality trade-offs also depend on each model's head dimensions, dtype, and implementation.
+
+### Prompt length and prefill cache
+
+![KV-cache prefill size versus input length for the models in the plotted dataset](imgs/inp_vs_kv.png)
+
+**What it shows:** the horizontal axis is input length and the vertical axis is KV-cache size after prompt prefill. The plotted models have different slopes and absolute cache sizes; the chart illustrates why KV memory should be compared per model rather than inferred from parameter count alone.
+
+![Relative decoding throughput versus input length, normalized to the reference row](imgs/inp_vs_speed.png)
+
+**What it shows:** throughput change is plotted relative to a baseline throughput value for each model, with the dashed line marking zero change. The analysis notebook selects the second CSV row as the baseline, so verify that row corresponds to the intended reference input length before interpreting percentages.
+
+### Generation length and growing cache
+
+![Final KV-cache size versus number of generated tokens](imgs/gen_vs_kv.png)
+
+**What it shows:** the final KV cache grows as more tokens are generated. The growth rates differ across the models in this dataset, reflecting their cache/head configurations and numerical formats.
+
+![Relative decoding throughput versus number of generated tokens, normalized to the reference row](imgs/gen_vs_speed.png)
+
+**What it shows:** decoding throughput is compared with the per-model baseline (again, the second row in each CSV). The downward trends in several curves indicate lower throughput at longer generation lengths in these measurements; they are empirical results for the recorded setup, not a guarantee for every model or hardware configuration.
+
+### Retrieval accuracy and cache precision
+
+![Needle-in-a-haystack retrieval accuracy across model and KV-cache precision settings](imgs/haystack.png)
+
+**What it shows:** the chart compares passcode retrieval accuracy for 4-bit, 8-bit, and 16-bit KV-cache settings across the listed models. Lower precision can reduce cache storage, but retrieval accuracy varies by model and setting. Treat the bars as results for the plotted experiment configuration; consult the associated benchmark data and methodology before making a general quality claim.
 
 ## Metrics and terminology
 
